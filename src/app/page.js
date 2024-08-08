@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { auth, db } from './firebase'
+import { auth, firestore } from './firebase'
 import { onAuthStateChanged, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'
 import LoginForm from './components/LoginForm'
@@ -30,7 +30,7 @@ export default function Page() {
       const user = result.user
 
       // Create user document in Firestore
-      await setDoc(doc(db, 'users', user.uid), {
+      await setDoc(doc(firestore, 'users', user.uid), {
         uid: user.uid,
         email: user.email,
         createdAt: new Date().toISOString()
@@ -46,7 +46,7 @@ export default function Page() {
       const user = userCredential.user
 
       // Create user document in Firestore
-      await setDoc(doc(db, 'users', user.uid), {
+      await setDoc(doc(firestore, 'users', user.uid), {
         uid: user.uid,
         email: user.email,
         createdAt: new Date().toISOString()
