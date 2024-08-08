@@ -22,7 +22,7 @@ export default function LoginForm({ onGoogleLogin, onEmailLogin, onEmailSignup }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-neutral-900 pattern-bg">
+    <div className="relative min-h-screen flex items-center justify-center bg-black pattern-bg">
       <div className="relative flex flex-col items-center space-y-8 p-8">
         <div className="relative bg-neutral-900 bg-opacity-100 p-6 rounded-lg flex items-center space-x-4">  
           <h1 className="text-4xl font-bold text-white text-center">
