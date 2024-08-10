@@ -1,7 +1,9 @@
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // This should be set in your environment variables
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.NEXT_PUBLIC_OPEN_ROUTER_KEY, // This should be set in your environment variables
+  dangerouslyAllowBrowser: true,
 });
 
 export async function handleAsk(inputText) {
@@ -9,7 +11,8 @@ export async function handleAsk(inputText) {
         // Retrieve relevant information from the user
         const userData = retrieveUserData(inputText);
         // Augment the retrieved information with additional data
-        const augmentedData = augmentUserData(userData);
+         const augmentedData = "test"
+         //augmentUserData(userData);
         // Generate personalized recommendations using OpenAI
         const generatedText = await generateText(inputText, augmentedData);
         return generatedText;
@@ -56,12 +59,10 @@ function augmentUserData(userData) {
  * @returns {Promise<string>} Generated text with personalized recommendations.
  */
 async function generateText(inputText, augmentedData) {
-    const prompt = createPrompt(inputText, augmentedData);
+    //const prompt = createPrompt(inputText, augmentedData);
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
-      max_tokens: 200,
-      temperature: 0.7,
+      model: "meta-llama/llama-3.1-8b-instruct:free",
+      messages: [{ role: "user", content: inputText }],
     });
   
     return completion.choices[0].message.content;
