@@ -9,6 +9,7 @@ export default function Home({ user, onLogout }) {
   const [inputText, setInputText] = useState('');
   const [response, setResponse] = useState('');
   const [error, setError] = useState(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     console.log('Home component mounted');
@@ -29,13 +30,25 @@ export default function Home({ user, onLogout }) {
     }
   };
 
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   if (error) {
     return <div className="text-white">Error: {error}</div>;
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-neutral-950 text-white">
+    <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-neutral-950 text-white' : 'bg-white text-black'}`}>
       <Navbar onLogout={onLogout} />
+      <div className="flex justify-end p-4">
+        <button
+          onClick={toggleDarkMode}
+          className="bg-gray-300 dark:bg-gray-800 text-black dark:text-white font-bold py-2 px-4 rounded-lg shadow-lg"
+        >
+          {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+        </button>
+      </div>
       <div className="flex-grow flex flex-col items-center justify-center p-4">
         <div className="max-w-2xl text-center">
           <h1 className="text-4xl font-bold mb-4">
@@ -56,7 +69,7 @@ export default function Home({ user, onLogout }) {
               value={inputText}
               onChange={handleInputChange}
               placeholder="Ask me anything about nutrition or recipes..."
-              className="w-full p-4 text-sm text-gray-900 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-600 resize-none shadow-md bg-gray-100"
+              className={`w-full p-4 text-sm ${isDarkMode ? 'text-gray-100 bg-gray-800 border-gray-600' : 'text-gray-900 bg-gray-100 border-gray-300'} rounded-lg border focus:outline-none focus:ring-2 focus:ring-gray-600 resize-none shadow-md`}
               rows={2}
               style={{ minHeight: '3rem', maxHeight: '150px', overflow: 'hidden', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}
               onInput={(e) => {
@@ -72,7 +85,7 @@ export default function Home({ user, onLogout }) {
             </button>
           </div>
           {response && (
-            <div className="mt-4 p-4 bg-gray-800 rounded-lg">
+            <div className={`mt-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-gray-200 text-black'}`}>
               <h3 className="text-xl font-bold mb-2">Krrish's Response:</h3>
               <ReactMarkdown>{response}</ReactMarkdown>
             </div>
