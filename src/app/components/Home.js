@@ -89,8 +89,10 @@ export default function Home({ user, onLogout }) {
           </div>
           {response && (
             <div className={`mt-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-gray-200 text-black'}`}>
-              <h3 className="text-xl font-bold mb-2">Krrish's Response:</h3>
-              <ReactMarkdown>{response}</ReactMarkdown>
+              <h3 className="text-xl font-bold mb-4 text-center font-rubik">Krrish's Response:</h3>
+              <div className="text-left font-roboto-mono">
+                <ReactMarkdown>{response}</ReactMarkdown>
+              </div>
             </div>
           )}
         </div>
