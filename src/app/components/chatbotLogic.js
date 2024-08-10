@@ -114,16 +114,43 @@ function analyzeHealthTrends(userData) {
 }
 
 function createPrompt(inputText, augmentedData) {
-  return `As a chef and personal nutritionist, please provide advice for a person with the following characteristics:
+    let dietaryRestrictions, foodAllergies, healthGoals, nutritionalDeficiencies;
   
-  Input: "${inputText}"
-  Dietary Restrictions: ${augmentedData.foodPreferences.join(', ')}
-  Food Allergies: ${augmentedData.foodAllergies.join(', ')}
-  Health Goals: ${augmentedData.healthTrends.join(', ')}
-  Potential Nutritional Deficiencies: ${augmentedData.nutritionalDeficiencies.join(', ')}
+    if (augmentedData.foodPreferences.length > 0) {
+      dietaryRestrictions = augmentedData.foodPreferences.join(', ');
+    } else {
+      dietaryRestrictions = 'No specific dietary restrictions.';
+    }
   
-  Based on this information, provide personalized nutritional advice, recipe suggestions, or answer their question.`;
-}
+    if (augmentedData.foodAllergies.length > 0) {
+      foodAllergies = augmentedData.foodAllergies.join(', ');
+    } else {
+      foodAllergies = 'No food allergies.';
+    }
+  
+    if (augmentedData.healthTrends.length > 0) {
+      healthGoals = augmentedData.healthTrends.join(', ');
+    } else {
+      healthGoals = 'No specific health goals.';
+    }
+  
+    if (augmentedData.nutritionalDeficiencies.length > 0) {
+      nutritionalDeficiencies = augmentedData.nutritionalDeficiencies.join(', ');
+    } else {
+      nutritionalDeficiencies = 'No known nutritional deficiencies.';
+    }
+  
+    return `As a chef and personal nutritionist, please provide advice for a person with the following characteristics:
+  
+    Input: "${inputText}"
+    Dietary Restrictions: ${dietaryRestrictions}
+    Food Allergies: ${foodAllergies}
+    Health Goals: ${healthGoals}
+    Potential Nutritional Deficiencies: ${nutritionalDeficiencies}
+  
+    Based on this information, provide personalized nutritional advice, recipe suggestions, or answer their question.`;
+  }  
+  
 
 function postProcessModelOutput(modelOutput) {
   // Remove any incomplete sentences at the end
