@@ -11,8 +11,7 @@ export async function handleAsk(inputText) {
         // Retrieve relevant information from the user
         const userData = retrieveUserData(inputText);
         // Augment the retrieved information with additional data
-         const augmentedData = "test"
-         //augmentUserData(userData);
+         const augmentedData = augmentUserData(userData);
         // Generate personalized recommendations using OpenAI
         const generatedText = await generateText(inputText, augmentedData);
         return generatedText;
@@ -59,12 +58,15 @@ function augmentUserData(userData) {
  * @returns {Promise<string>} Generated text with personalized recommendations.
  */
 async function generateText(inputText, augmentedData) {
-    //const prompt = createPrompt(inputText, augmentedData);
+    const prompt = createPrompt(inputText, augmentedData);
+    console.log("This is the prompt")
+    console.log(prompt)
     const completion = await openai.chat.completions.create({
       model: "meta-llama/llama-3.1-8b-instruct:free",
       messages: [{ role: "user", content: inputText }],
     });
-  
+    
+    console.log(completion.choices[0].message.content)
     return completion.choices[0].message.content;
   }
   
@@ -116,25 +118,25 @@ function analyzeHealthTrends(userData) {
 function createPrompt(inputText, augmentedData) {
     let dietaryRestrictions, foodAllergies, healthGoals, nutritionalDeficiencies;
   
-    if (augmentedData.foodPreferences.length > 0) {
+    if (augmentedData.foodPreferences > 0) {
       dietaryRestrictions = augmentedData.foodPreferences.join(', ');
     } else {
       dietaryRestrictions = 'No specific dietary restrictions.';
     }
   
-    if (augmentedData.foodAllergies.length > 0) {
+    if (augmentedData.foodAllergies > 0) {
       foodAllergies = augmentedData.foodAllergies.join(', ');
     } else {
       foodAllergies = 'No food allergies.';
     }
   
-    if (augmentedData.healthTrends.length > 0) {
+    if (augmentedData.healthTrends > 0) {
       healthGoals = augmentedData.healthTrends.join(', ');
     } else {
       healthGoals = 'No specific health goals.';
     }
   
-    if (augmentedData.nutritionalDeficiencies.length > 0) {
+    if (augmentedData.nutritionalDeficiencies > 0) {
       nutritionalDeficiencies = augmentedData.nutritionalDeficiencies.join(', ');
     } else {
       nutritionalDeficiencies = 'No known nutritional deficiencies.';
