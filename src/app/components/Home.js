@@ -3,6 +3,8 @@ import Navbar from './Navbar';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import logo from '../../../public/assets/logoK.png';
+import moonIcon from './moon.svg';
+import sunIcon from './sun.svg';
 import { handleAsk } from './chatbotLogic';
 
 export default function Home({ user, onLogout }) {
@@ -44,9 +46,14 @@ export default function Home({ user, onLogout }) {
       <div className="flex justify-end p-4">
         <button
           onClick={toggleDarkMode}
-          className="bg-gray-300 dark:bg-gray-800 text-black dark:text-white font-bold py-2 px-4 rounded-lg shadow-lg"
+          className="focus:outline-none"
         >
-          {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+          <Image
+            src={isDarkMode ? moonIcon : sunIcon}
+            alt={isDarkMode ? 'Dark Mode' : 'Light Mode'}
+            width={32}
+            height={32}
+          />
         </button>
       </div>
       <div className="flex-grow flex flex-col items-center justify-center p-4">
@@ -71,11 +78,7 @@ export default function Home({ user, onLogout }) {
               placeholder="Ask me anything about nutrition or recipes..."
               className={`w-full p-4 text-sm ${isDarkMode ? 'text-gray-100 bg-gray-800 border-gray-600' : 'text-gray-900 bg-gray-100 border-gray-300'} rounded-lg border focus:outline-none focus:ring-2 focus:ring-gray-600 resize-none shadow-md`}
               rows={2}
-              style={{ minHeight: '3rem', maxHeight: '150px', overflow: 'hidden', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}
-              onInput={(e) => {
-                e.target.style.height = 'auto';
-                e.target.style.height = `${e.target.scrollHeight}px`;
-              }}
+              style={{ minHeight: '3rem', maxHeight: '150px', overflowY: 'auto', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}
             />
             <button
               onClick={handleSubmit}
