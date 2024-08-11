@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import { Timestamp } from 'firebase/firestore';
 
 const HistoryItem = ({ date, question, answer }) => {
+  let formattedDate;
   const [isOpen, setIsOpen] = useState(false);
+  if(date instanceof Date){
+    formattedDate = date.toLocaleString()
+  }else if (date instanceof Timestamp){
+    formattedDate = date.toDate().toLocaleString()
+  }
 
   return (
     <motion.div
@@ -16,7 +23,8 @@ const HistoryItem = ({ date, question, answer }) => {
         className="w-full text-left font-semibold text-gray-700 hover:text-gray-900"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {date.toLocaleString()} - {question.substring(0, 50)}...
+        {console.log(date)}
+        {formattedDate} - {question.substring(0, 50)}...
       </motion.button>
       <AnimatePresence>
         {isOpen && (
@@ -27,8 +35,8 @@ const HistoryItem = ({ date, question, answer }) => {
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <p className="mt-2 text-gray-600">{question}</p>
-            <div className="text-left text-lg">
+            <p className="mt-2 text-gray-600 font-bold text-xl">{question}</p>
+            <div className="text-left text-base">
             <p className="mt-2 text-gray-800"><ReactMarkdown>{answer}</ReactMarkdown></p>
             </div>
           </motion.div>

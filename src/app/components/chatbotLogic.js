@@ -28,6 +28,7 @@ export async function handleAsk(inputText, userPreferences) {
     const completion = await openai.chat.completions.create({
       model: "meta-llama/llama-3.1-8b-instruct:free",
       messages: [{ role: "user", content: prompt }],
+      
     });
     
     const generatedText = completion.choices[0].message.content;

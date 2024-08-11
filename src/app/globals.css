@@ -49,3 +49,17 @@ body {
   background-size: 50px 50px;
   background-repeat: repeat;
 }
+
+ul {
+  list-style-type: disc; /* Shows bullets for unordered lists */
+  margin: 1rem 0;        /* Adds margin around the list for spacing */
+  padding-left: 2rem; /* Adds padding to indent the list items */
+  list-style-position: outside; /* Ensures bullets are outside the content box */
+}
+
+ol {
+  list-style-type: decimal; /* Shows numbers for ordered lists */
+  margin: 1rem 0;          /* Adds margin around the list for spacing */
+  padding-left: 2rem;   /* Adds padding to indent the list items */
+  list-style-position: outside; /* Ensures numbers are outside the content box */
+}

@@ -39,6 +39,7 @@ export default function Home({ user, onLogout }) {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
+        console.log(docSnap.data())
         setChatHistory(docSnap.data().chatHistory || []);
       } else {
         console.log("No such document!");
