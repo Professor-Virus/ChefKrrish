@@ -13,7 +13,6 @@
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@huggingface/inference": "^2.8.0",
-    "@mui/material": "^5.16.7",
     "dotenv": "^16.4.5",
     "firebase": "^10.12.5",
     "framer-motion": "^11.3.24",
