@@ -7,20 +7,39 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-export async function handleAsk(inputText) {
-    try {
-        // Retrieve relevant information from the user
-        const userData = retrieveUserData(inputText);
-        // Augment the retrieved information with additional data
-         const augmentedData = augmentUserData(userData);
-        // Generate personalized recommendations using OpenAI
-        const generatedText = await generateText(inputText, augmentedData);
-        return generatedText;
-    } catch (error) {
-        console.error("Error during handleAsk:", error);
-        return "Sorry, an error occurred while generating a response.";
-    }
+
+export async function handleAsk(inputText, userPreferences) {
+  console.log("Received input:", inputText);
+  console.log("Received preferences in handleAsk:", userPreferences);
+
+  try {
+    // Retrieve relevant information from the user
+    const userData = retrieveUserData(inputText, userPreferences);
+    console.log("User data after retrieval:", userData);
+
+    // Augment the retrieved information with additional data
+    const augmentedData = augmentUserData(userData);
+    console.log("Augmented data:", augmentedData);
+
+    // Generate personalized recommendations using OpenAI
+    const prompt = createPrompt(inputText, augmentedData);
+    console.log("Generated prompt:", prompt);
+
+    const completion = await openai.chat.completions.create({
+      model: "meta-llama/llama-3.1-8b-instruct:free",
+      messages: [{ role: "user", content: prompt }],
+    });
+    
+    const generatedText = completion.choices[0].message.content;
+    console.log("Generated response:", generatedText);
+
+    return generatedText;
+  } catch (error) {
+    console.error("Error during handleAsk:", error);
+    return "Sorry, an error occurred while generating a response.";
+  }
 }
+
 
 /**
  * Retrieve relevant information from the user.
@@ -28,14 +47,18 @@ export async function handleAsk(inputText) {
  * @param {string} inputText - User input text.
  * @returns {object} User data with dietary needs and preferences.
  */
-function retrieveUserData(inputText) {
+function retrieveUserData(inputText, userPreferences = { selectedRestrictions: [], selectedAllergies: [], selectedGoals: [] }) {
+  console.log("User preferences received in retrieveUserData:", userPreferences);
   return {
-    dietaryRestrictions: parseDietaryRestrictions(inputText),
-    foodAllergies: parseFoodAllergies(inputText),
-    healthGoals: parseHealthGoals(inputText),
+    dietaryRestrictions: userPreferences.selectedRestrictions,
+    foodAllergies: userPreferences.selectedAllergies,
+    healthGoals: userPreferences.selectedGoals,
     favoriteFoods: parseFavoriteFoods(inputText),
   };
 }
+
+
+
 
 /**
  * Augment user data with additional information.
@@ -44,10 +67,12 @@ function retrieveUserData(inputText) {
  * @returns {object} Augmented user data with additional information.
  */
 function augmentUserData(userData) {
+  console.log("Augmenting user data:", userData);
   return {
-    foodPreferences: analyzeFoodPreferences(userData),
+    foodPreferences: userData.dietaryRestrictions,
+    foodAllergies: userData.foodAllergies,
+    healthTrends: userData.healthGoals,
     nutritionalDeficiencies: analyzeNutritionalDeficiencies(userData),
-    healthTrends: analyzeHealthTrends(userData),
   };
 }
 
@@ -117,42 +142,37 @@ function analyzeHealthTrends(userData) {
 }
 
 function createPrompt(inputText, augmentedData) {
-    let dietaryRestrictions, foodAllergies, healthGoals, nutritionalDeficiencies;
-  
-    if (augmentedData.foodPreferences > 0) {
-      dietaryRestrictions = augmentedData.foodPreferences.join(', ');
-    } else {
-      dietaryRestrictions = 'No specific dietary restrictions.';
-    }
-  
-    if (augmentedData.foodAllergies > 0) {
-      foodAllergies = augmentedData.foodAllergies.join(', ');
-    } else {
-      foodAllergies = 'No food allergies.';
-    }
-  
-    if (augmentedData.healthTrends > 0) {
-      healthGoals = augmentedData.healthTrends.join(', ');
-    } else {
-      healthGoals = 'No specific health goals.';
-    }
-  
-    if (augmentedData.nutritionalDeficiencies > 0) {
-      nutritionalDeficiencies = augmentedData.nutritionalDeficiencies.join(', ');
-    } else {
-      nutritionalDeficiencies = 'No known nutritional deficiencies.';
-    }
-  
-    return `As a chef and personal nutritionist, please provide advice for a person with the following characteristics:
-  
-    Input: "${inputText}"
-    Dietary Restrictions: ${dietaryRestrictions}
-    Food Allergies: ${foodAllergies}
-    Health Goals: ${healthGoals}
-    Potential Nutritional Deficiencies: ${nutritionalDeficiencies}
-  
-    Based on this information, provide personalized nutritional advice, recipe suggestions, or answer their question.`;
-  }  
+  console.log("Creating prompt with augmented data:", augmentedData);
+
+  const dietaryRestrictions = augmentedData.foodPreferences.length > 0
+    ? augmentedData.foodPreferences.join(', ')
+    : 'No specific dietary restrictions.';
+
+  const foodAllergies = augmentedData.foodAllergies.length > 0
+    ? augmentedData.foodAllergies.join(', ')
+    : 'No food allergies.';
+
+  const healthGoals = augmentedData.healthTrends.length > 0
+    ? augmentedData.healthTrends.join(', ')
+    : 'No specific health goals.';
+
+  const nutritionalDeficiencies = augmentedData.nutritionalDeficiencies.length > 0
+    ? augmentedData.nutritionalDeficiencies.join(', ')
+    : 'No known nutritional deficiencies.';
+
+  const prompt = `As a chef and personal nutritionist, please provide advice for a person with the following characteristics:
+
+  Input: "${inputText}"
+  Dietary Restrictions: ${dietaryRestrictions}
+  Food Allergies: ${foodAllergies}
+  Health Goals: ${healthGoals}
+  Potential Nutritional Deficiencies: ${nutritionalDeficiencies}
+
+  Based on this information, provide personalized nutritional advice, recipe suggestions, or answer their question. Ensure to strictly avoid any foods listed in the Food Allergies.`;
+
+  console.log("Generated prompt:", prompt);
+  return prompt;
+}
   
 
 function postProcessModelOutput(modelOutput) {

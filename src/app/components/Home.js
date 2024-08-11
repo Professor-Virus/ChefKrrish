@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { doc, setDoc, getDoc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { firestore } from '../firebase';
 import Navbar from './Navbar';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
@@ -6,6 +8,7 @@ import logo from '../../../public/assets/logoK.png';
 import moonIcon from './moon.svg';
 import sunIcon from './sun.svg';
 import CheckList from './CheckList';
+import History from './History';
 import { handleAsk } from './chatbotLogic';
 
 export default function Home({ user, onLogout }) {
@@ -13,22 +16,37 @@ export default function Home({ user, onLogout }) {
   const [response, setResponse] = useState("");
   const [error, setError] = useState(null);
   const [showCheckList, setShowCheckList] = useState(false);
-  const [submittedData, setSubmittedData] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [chatHistory, setChatHistory] = useState([]);
 
-  // Function to handle data from child component
-  const handleDataSubmit = (data) => {
-    setSubmittedData(data);
-    console.log("Data received from child:", data);
-  };
+  const [preferences, setPreferences] = useState({
+    selectedRestrictions: [],
+    selectedAllergies: [],
+    selectedGoals: []
+  });
 
   useEffect(() => {
     console.log("Home component mounted");
-  }, []);
+    if (user) {
+      // Fetch the chat history from Firestore when the component mounts
+      fetchChatHistory();
+    }
+  }, [user]);
 
-  useEffect(() => {
-    console.log(submittedData);
-  }, [submittedData]);
+  const fetchChatHistory = async () => {
+    try {
+      const docRef = doc(firestore, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        setChatHistory(docSnap.data().chatHistory || []);
+      } else {
+        console.log("No such document!");
+      }
+    } catch (err) {
+      console.error("Error fetching chat history:", err);
+    }
+  };
 
   const toggleChecklist = () => {
     setShowCheckList(!showCheckList);
@@ -40,8 +58,25 @@ export default function Home({ user, onLogout }) {
 
   const handleSubmit = async () => {
     try {
-      const result = await handleAsk(inputText);
+      console.log("Submitting with preferences:", preferences);
+      const result = await handleAsk(inputText, preferences);
       setResponse(result);
+
+      const newEntry = {
+        date: new Date(),
+        question: inputText,
+        answer: result
+      };
+
+      // Add to chat history
+      setChatHistory(prevHistory => [newEntry, ...prevHistory]);
+
+      // Save the new chat entry to Firestore
+      const docRef = doc(firestore, 'users', user.uid);
+      await updateDoc(docRef, {
+        chatHistory: arrayUnion(newEntry)
+      });
+
       setInputText("");
     } catch (err) {
       console.error("Error in handleSubmit:", err);
@@ -51,6 +86,11 @@ export default function Home({ user, onLogout }) {
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const handlePreferencesSubmit = (data) => {
+    setPreferences(data);
+    console.log("Preferences updated in Home component:", data);
   };
 
   if (error) {
@@ -71,60 +111,66 @@ export default function Home({ user, onLogout }) {
         </button>
       </div>
       <div className="flex-grow flex flex-col items-center justify-center p-4">
-        <div className="max-w-2xl text-center">
-          <h1 className="text-4xl font-bold mb-4">
+        <div className="max-w-4xl w-full text-center">
+          <h1 className="text-4xl font-bold mb-8">
             Hello, {user?.email || "Guest"}! I'm Krrish, your chef and nutritionist chatbot
           </h1>
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-8">
             <Image
               src={logo}
               alt="logo"
-              width={256}
-              height={256}
+              width={200}
+              height={200}
               className="rounded-full shadow-lg"
             />
-            {showCheckList && (
-              <CheckList 
-                toggleFunction={toggleChecklist}
-                handleSubmit={handleDataSubmit}
-              />
-            )}
           </div>
-          <div className="flex flex-col items-center">
-            <h2 className="text-2xl font-bold mb-2">What's on your mind?</h2>
+          <div className="flex flex-col items-center space-y-6">
+            <h2 className="text-2xl font-bold">What's on your mind?</h2>
             <textarea
               value={inputText}
               onChange={handleInputChange}
               placeholder="Ask me anything about nutrition or recipes..."
-              className={`w-full p-4 text-sm ${isDarkMode ? 'text-gray-100 bg-gray-800 border-gray-600' : 'text-gray-900 bg-gray-100 border-gray-300'} rounded-lg border focus:outline-none focus:ring-2 focus:ring-gray-600 resize-none shadow-md`}
-              rows={2}
-              style={{ minHeight: '3rem', maxHeight: '150px', overflowY: 'auto', wordWrap: 'break-word', whiteSpace: 'pre-wrap' }}
+              className={`w-full p-4 text-lg ${isDarkMode ? 'text-gray-100 bg-gray-800 border-gray-600' : 'text-gray-900 bg-gray-100 border-gray-300'} rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none shadow-md`}
+              rows={3}
+              style={{ minHeight: '6rem', maxHeight: '12rem', overflowY: 'auto' }}
             />
-            <div className="flex justify-between">
+            <div className="flex justify-between w-full">
               <button
-                onClick={() => setShowCheckList(true)}
-                className="p-2 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg mt-2"
+                onClick={toggleChecklist}
+                className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
               >
                 Set Preferences
               </button>
               <button
                 onClick={handleSubmit}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg mt-3 shadow-lg"
+                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg"
               >
                 Ask
               </button>
             </div>
           </div>
           {response && (
-            <div className={`mt-4 p-4 rounded-lg ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-gray-200 text-black'}`}>
-              <h3 className="text-xl font-bold mb-4 text-center font-rubik">Krrish's Response:</h3>
-              <div className="text-left font-roboto-mono">
+            <div className={`mt-8 p-6 rounded-lg ${isDarkMode ? 'bg-gray-800 text-gray-100' : 'bg-gray-200 text-black'} shadow-xl`}>
+              <h3 className="text-2xl font-bold mb-4 text-center">Krrish's Response:</h3>
+              <div className="text-left text-lg">
                 <ReactMarkdown>{response}</ReactMarkdown>
               </div>
             </div>
           )}
         </div>
       </div>
+      {showCheckList && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className={`p-8 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-white'} max-w-2xl w-full`}>
+            <CheckList 
+              toggleFunction={toggleChecklist}
+              handleSubmit={handlePreferencesSubmit}
+              initialPreferences={preferences}
+            />
+          </div>
+        </div>
+      )}
+      <History chatHistory={chatHistory} />
     </div>
   );
 }

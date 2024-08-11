@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 
-export default function CheckList({ toggleFunction, handleSubmit }) {
+export default function CheckList({ toggleFunction, handleSubmit, initialPreferences }) {
   const restrictions = [
     "vegan",
     "vegetarian",
@@ -34,11 +34,10 @@ export default function CheckList({ toggleFunction, handleSubmit }) {
   };
 
   // State management
-  const [state, setState] = useState(initialState);
-  const [previousState, setPreviousState] = useState(initialState);
+  const [state, setState] = useState(initialPreferences || initialState);
+  const [previousState, setPreviousState] = useState(initialPreferences || initialState);
 
-  //Changes the respective array, when a checked on the checklist
-  //Although changes aren't incorporated until save is pressed
+  // Changes the respective array, when checked on the checklist
   const handleArrayChange = (category, item, isChecked) => {
     setState((prevState) => {
       const updatedArray = isChecked
@@ -52,20 +51,16 @@ export default function CheckList({ toggleFunction, handleSubmit }) {
     });
   };
 
-  //If canceled sets the state to previous state
+  // If canceled sets the state to previous state
   const handleCancel = () => {
     setState(previousState);
-    // console.log("Cancelled, this is the state being reverted to:");
-    // console.log(previousState);
     toggleFunction();
   };
 
-  //If saved, will log the new state as prevstate and the current state
-  //It will also call handleSave which will log the changes into, submittedData in Home.js
+  // If saved, will update the preferences in the parent component
   const handleSave = () => {
+    console.log("Saving preferences:", state);
     setPreviousState(state);
-    // console.log("Saved, this is the new state:");
-    // console.log(state);
     handleSubmit(state);
     toggleFunction();
   };
@@ -87,6 +82,7 @@ export default function CheckList({ toggleFunction, handleSubmit }) {
                     e.target.checked
                   )
                 }
+                className="mr-2"
               />
               {restriction}
             </label>
@@ -96,54 +92,59 @@ export default function CheckList({ toggleFunction, handleSubmit }) {
 
       <div>
         <h3 className="text-lg font-semibold mb-2">Common Allergies</h3>
-        {commonAllergies.map((allergy) => (
-          <label key={allergy} className="flex items-center">
-            <input
-              type="checkbox"
-              checked={state.selectedAllergies.includes(allergy)}
-              onChange={(e) =>
-                handleArrayChange(
-                  "selectedAllergies",
-                  allergy,
-                  e.target.checked
-                )
-              }
-            />
-            {allergy}
-          </label>
-        ))}
+        <div className="space-y-2">
+          {commonAllergies.map((allergy) => (
+            <label key={allergy} className="flex items-center">
+              <input
+                type="checkbox"
+                checked={state.selectedAllergies.includes(allergy)}
+                onChange={(e) =>
+                  handleArrayChange(
+                    "selectedAllergies",
+                    allergy,
+                    e.target.checked
+                  )
+                }
+                className="mr-2"
+              />
+              {allergy}
+            </label>
+          ))}
+        </div>
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold mb-2"> Goals</h3>
-        {goals.map((goal) => (
-          <label key={goal} className="flex items-center">
-            <input
-              type="checkbox"
-              checked={state.selectedGoals.includes(goal)}
-              onChange={(e) =>
-                handleArrayChange("selectedGoals", goal, e.target.checked)
-              }
-            />
-            {goal}
-          </label>
-        ))}
+        <h3 className="text-lg font-semibold mb-2">Goals</h3>
+        <div className="space-y-2">
+          {goals.map((goal) => (
+            <label key={goal} className="flex items-center">
+              <input
+                type="checkbox"
+                checked={state.selectedGoals.includes(goal)}
+                onChange={(e) =>
+                  handleArrayChange("selectedGoals", goal, e.target.checked)
+                }
+                className="mr-2"
+              />
+              {goal}
+            </label>
+          ))}
+        </div>
       </div>
-      <div className="flex justify-between">
+      <div className="col-span-3 flex justify-between mt-4">
         <button
           onClick={handleSave}
-          className="p-2 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg mt-2"
+          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition duration-300 ease-in-out"
         >
           Save
         </button>
         <button
           onClick={handleCancel}
-          className="p-2 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg mt-2"
+          className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white font-bold rounded-lg transition duration-300 ease-in-out"
         >
           Cancel
         </button>
       </div>
     </div>
-    
   );
 }
