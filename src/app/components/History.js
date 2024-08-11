@@ -23,7 +23,6 @@ const HistoryItem = ({ date, question, answer }) => {
         className="w-full text-left font-semibold text-gray-700 hover:text-gray-900"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {console.log(date)}
         {formattedDate} - {question.substring(0, 50)}...
       </motion.button>
       <AnimatePresence>
@@ -46,10 +45,16 @@ const HistoryItem = ({ date, question, answer }) => {
   );
 };
 
-const History = ({ chatHistory }) => {
+const History = ({ chatHistory, deleteHistoryFunction }) => {
   return (
     <div className="bg-white shadow-md rounded-lg p-4 mt-4">
-      <h2 className="text-xl font-bold mb-4">Chat History</h2>
+      <div className='flex justify-between'>
+        <h2 className="text-xl font-bold mb-4">Chat History</h2>
+        <button className='px-2 py-3 bg-red-500 hover:bg-blue-700 text-white font-bold rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg'
+        onClick={deleteHistoryFunction}
+        >Delete History
+        </button>
+      </div>
       <motion.div layout>
         {chatHistory.map((item, index) => (
           <HistoryItem key={index} {...item} />
