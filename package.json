@@ -10,6 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
     "@fontsource/poppins": "^5.0.14",
     "@huggingface/inference": "^2.8.0",
     "dotenv": "^16.4.5",
