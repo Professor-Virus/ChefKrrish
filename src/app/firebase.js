@@ -1,7 +1,10 @@
-// import { initializeApp } from 'firebase/app'
-// import { getAuth } from 'firebase/auth'
-// import { getFirestore } from 'firebase/firestore'
+import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
+//TWO FIREBASE CONNECTIONS: PICK ACCORDINGLY
+
+//AAYUSH'S FIREBASE CONNECTION BELOW
 // const firebaseConfig = {
 //     apiKey: "AIzaSyApoyI_LehncRMWf0iuaHi_gYCXq3ICLDo",
 //     authDomain: "chatbot-ee6c8.firebaseapp.com",
@@ -11,12 +14,9 @@
 //     appId: "1:461953225670:web:eb2f76b62199250b81d8c7",
 //     measurementId: "G-NWNB3RSDNK"
 //   };
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
 
 
+//AMAN'S FIREBASE CONNECTION BELOW
 const firebaseConfig = {
   apiKey: "AIzaSyB9BfFKl4kO4vIUDkxroxDkui_WbgM4zbo",
   authDomain: "chat-bot-46302.firebaseapp.com",
