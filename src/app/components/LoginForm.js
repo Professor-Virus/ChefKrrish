@@ -21,6 +21,7 @@ export default function LoginForm({ onGoogleLogin, onEmailLogin, onEmailSignup }
     onEmailSignup(email, password);
   };
 
+
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-black pattern-bg">
       <div className="relative flex flex-col items-center space-y-8 p-8">
