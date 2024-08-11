@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
 
 const HistoryItem = ({ date, question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,7 +28,9 @@ const HistoryItem = ({ date, question, answer }) => {
             className="overflow-hidden"
           >
             <p className="mt-2 text-gray-600">{question}</p>
-            <p className="mt-2 text-gray-800">{answer}</p>
+            <div className="text-left text-lg">
+            <p className="mt-2 text-gray-800"><ReactMarkdown>{answer}</ReactMarkdown></p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
