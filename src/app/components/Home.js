@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { firestore } from "../firebase";
 import Navbar from "./Navbar";
@@ -58,11 +58,11 @@ export default function Home({ user, onLogout }) {
     }
   }, [chatMessages]);
 
-  const fetchChatHistory = async () => {
+  const fetchChatHistory = useCallback(async () => {
     try {
       const docRef = doc(firestore, "users", user.uid);
       const docSnap = await getDoc(docRef);
-
+  
       if (docSnap.exists()) {
         setChatHistory(docSnap.data().chatHistory || []);
       } else {
@@ -71,7 +71,7 @@ export default function Home({ user, onLogout }) {
     } catch (err) {
       console.error("Error fetching chat history:", err);
     }
-  };
+  }, [user]);
 
   const toggleChecklist = () => {
     setShowCheckList(!showCheckList);
@@ -161,7 +161,7 @@ export default function Home({ user, onLogout }) {
       <div className="flex-grow flex flex-col items-center justify-center p-4">
         <div className="max-w-4xl w-full text-center">
           <h1 className="text-4xl font-bold mb-8">
-            Hello, {user?.email || "Guest"}! I'm Krrish, your chef and
+            Hello, {user?.email || "Guest"}! I&apos;m Krrish, your chef and
             nutritionist chatbot
           </h1>
           <div className="flex justify-center mb-8">
@@ -191,7 +191,7 @@ export default function Home({ user, onLogout }) {
           )}
 
           <div className="flex flex-col items-center space-y-6">
-            <h2 className="text-2xl font-bold">What's on your mind?</h2>
+            <h2 className="text-2xl font-bold">What&apos;s on your mind?</h2>
             <textarea
               value={inputText}
               onChange={handleInputChange}
