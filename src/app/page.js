@@ -30,11 +30,11 @@ export default function Page() {
       const user = result.user
 
       // Create user document in Firestore
-      await setDoc(doc(firestore, 'users', user.uid), {
-        uid: user.uid,
-        email: user.email,
-        createdAt: new Date().toISOString()
-      })
+      // await setDoc(doc(firestore, 'users', user.uid), {
+      //   uid: user.uid,
+      //   email: user.email,
+      //   createdAt: new Date().toISOString()
+      // })
     } catch (error) {
       console.error('Error logging in with Google:', error)
     }

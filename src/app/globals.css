@@ -2,8 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Rubik:wght@400;500;700&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Rubik:wght@400;500;700&display=swap");
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -35,17 +34,43 @@ body {
   }
 
   .font-roboto-mono {
-    font-family: 'Roboto Mono', monospace;
+    font-family: "Roboto Mono", monospace;
   }
 
   .font-rubik {
-    font-family: 'Rubik', sans-serif;
+    font-family: "Rubik", sans-serif;
   }
 }
-
 
 .pattern-bg {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-circle"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7A8.38 8.38 0 0 1 8 18l-4.2 1.1a1 1 0 0 1-1.3-1.3L3 16a8.38 8.38 0 0 1-1.1-4.5 8.5 8.5 0 0 1 4.7-7.6A8.38 8.38 0 0 1 12.5 3h.5A8.5 8.5 0 0 1 21 11.5z"></path></svg>');
   background-size: 50px 50px;
   background-repeat: repeat;
+}
+
+ul {
+  list-style-type: disc; /* Shows bullets for unordered lists */
+  margin: 1rem 0; /* Adds margin around the list for spacing */
+  padding-left: 2rem; /* Adds padding to indent the list items */
+  list-style-position: outside; /* Ensures bullets are outside the content box */
+}
+
+ol {
+  list-style-type: decimal; /* Shows numbers for ordered lists */
+  margin: 1rem 0; /* Adds margin around the list for spacing */
+  padding-left: 2rem; /* Adds padding to indent the list items */
+  list-style-position: outside; /* Ensures numbers are outside the content box */
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
 }
