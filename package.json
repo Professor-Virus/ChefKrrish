@@ -2,6 +2,7 @@
   "name": "chatbot",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,11 +10,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@fontsource/poppins": "^5.0.14",
+    "@huggingface/inference": "^2.8.0",
+    "dotenv": "^16.4.5",
     "firebase": "^10.12.5",
-    "framer-motion": "^11.3.23",
+    "framer-motion": "^11.3.24",
+    "ldrs": "^1.0.2",
     "next": "14.2.5",
+    "openai": "^4.55.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-markdown": "^9.0.1",
+    "transformers": "^1.8.3"
   },
   "devDependencies": {
     "eslint": "^8",
