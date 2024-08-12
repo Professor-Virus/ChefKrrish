@@ -74,3 +74,26 @@ ol {
     }
   }
 }
+
+/* Static TV Effect */
+.static-tv {
+  animation: static-tv 0.5s ease-in-out;
+}
+
+@keyframes static-tv {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+    filter: grayscale(100%) contrast(200%);
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+    filter: grayscale(100%) contrast(200%);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    filter: none;
+  }
+}

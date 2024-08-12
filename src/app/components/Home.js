@@ -3,7 +3,7 @@ import { doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { firestore } from "../firebase";
 import Navbar from "./Navbar";
 import Image from "next/image";
-import ReactMarkdown from "react-markdown";
+import { motion } from "framer-motion";
 import logo from "../../../public/assets/logoK.png";
 import moonIcon from "./moon.svg";
 import sunIcon from "./sun.svg";
@@ -11,15 +11,18 @@ import CheckList from "./CheckList";
 import History from "./History";
 import { handleAsk } from "./chatbotLogic";
 import LoadingAnimation from "./LoadingAnimation";
+import ChatMessage from "./ChatMessage";
 
 export default function Home({ user, onLogout }) {
   const [inputText, setInputText] = useState("");
-  const [response, setResponse] = useState("");
   const [error, setError] = useState(null);
   const [showCheckList, setShowCheckList] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [chatMessages, setChatMessages] = useState([]);
+  const [showStatic, setShowStatic] = useState(false);
+  const [showChatBox, setShowChatBox] = useState(false); // Added state for chat box visibility
 
   const [preferences, setPreferences] = useState({
     selectedRestrictions: [],
@@ -28,12 +31,22 @@ export default function Home({ user, onLogout }) {
   });
 
   useEffect(() => {
-    console.log("Home component mounted");
     if (user) {
-      // Fetch the chat history from Firestore when the component mounts
       fetchChatHistory();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (chatMessages.length > 0) {
+      // Show static TV effect when a new message is added
+      setShowStatic(true);
+      setShowChatBox(true); // Show chat box when a new message is added
+      const timer = setTimeout(() => {
+        setShowStatic(false);
+      }, 500); // Duration of the animation
+      return () => clearTimeout(timer);
+    }
+  }, [chatMessages]);
 
   const fetchChatHistory = async () => {
     try {
@@ -41,7 +54,6 @@ export default function Home({ user, onLogout }) {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        console.log(docSnap.data());
         setChatHistory(docSnap.data().chatHistory || []);
       } else {
         console.log("No such document!");
@@ -61,9 +73,15 @@ export default function Home({ user, onLogout }) {
 
   const handleSubmit = async () => {
     try {
-      console.log("Submitting with preferences:", preferences);
+      setLoading(true);
       const result = await handleAsk(inputText, preferences);
-      setResponse(result);
+      
+      // Add user message and bot response to chat messages
+      setChatMessages(prevMessages => [
+        ...prevMessages,
+        { text: inputText, isUser: true },
+        { text: result, isUser: false }
+      ]);
 
       const newEntry = {
         date: new Date(),
@@ -84,8 +102,8 @@ export default function Home({ user, onLogout }) {
     } catch (err) {
       console.error("Error in handleSubmit:", err);
       setError("An error occurred while processing your request.");
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,21 +113,18 @@ export default function Home({ user, onLogout }) {
 
   const handlePreferencesSubmit = (data) => {
     setPreferences(data);
-    console.log("Preferences updated in Home component:", data);
   };
 
-  const handleDelete = async (item) => {
-    const docRef = doc(firestore, 'users', user.uid)
+  const handleDelete = async () => {
+    const docRef = doc(firestore, 'users', user.uid);
     try {
       await updateDoc(docRef, {
         chatHistory: []
       });
-      fetchChatHistory()
-      console.log('chatHistory deleted successfully');
+      fetchChatHistory();
     } catch (error) {
       console.error('Error deleting field: ', error);
     }
-    
   };
 
   if (error) {
@@ -148,6 +163,21 @@ export default function Home({ user, onLogout }) {
               className="rounded-full shadow-lg"
             />
           </div>
+
+          {/* Enlarged chat interface with static TV effect */}
+          {showChatBox && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className={`mb-8 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg p-4 h-[60vh] overflow-y-auto ${showStatic ? 'static-tv' : ''}`}
+            >
+              {chatMessages.map((msg, index) => (
+                <ChatMessage key={index} message={msg.text} isUser={msg.isUser} />
+              ))}
+            </motion.div>
+          )}
+
           <div className="flex flex-col items-center space-y-6">
             <h2 className="text-2xl font-bold">What's on your mind?</h2>
             <textarea
@@ -174,10 +204,7 @@ export default function Home({ user, onLogout }) {
                 Set Preferences
               </button>
               <button
-                onClick={()=>{
-                  handleSubmit()
-                  setLoading(true)
-                }}
+                onClick={handleSubmit}
                 className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-lg"
               >
                 Ask
@@ -185,22 +212,6 @@ export default function Home({ user, onLogout }) {
             </div>
           </div>
           {loading && (<LoadingAnimation/>)}
-          {response && (
-            <div
-              className={`mt-8 p-6 rounded-lg ${
-                isDarkMode
-                  ? "bg-gray-800 text-gray-100"
-                  : "bg-gray-200 text-black"
-              } shadow-xl`}
-            >
-              <h3 className="text-2xl font-bold mb-4 text-center">
-                Krrish's Response:
-              </h3>
-              <div className="text-left text-lg">
-                <ReactMarkdown>{response}</ReactMarkdown>
-              </div>
-            </div>
-          )}
         </div>
       </div>
       {showCheckList && (
