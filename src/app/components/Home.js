@@ -228,9 +228,9 @@ export default function Home({ user, onLogout }) {
       {showCheckList && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div
-            className={`p-8 rounded-lg ${
+            className={`p-4 sm:p-8 rounded-lg ${
               isDarkMode ? "bg-gray-800" : "bg-white"
-            } max-w-2xl w-full`}
+            } max-w-full sm:max-w-2xl w-full mx-2 sm:mx-auto overflow-y-auto max-h-[80vh]`}
           >
             <CheckList
               toggleFunction={toggleChecklist}
@@ -238,6 +238,7 @@ export default function Home({ user, onLogout }) {
               initialPreferences={preferences}
             />
           </div>
+
         </div>
       )}
       <History chatHistory={chatHistory} deleteHistoryFunction={handleDelete} isDarkMode={isDarkMode} />
