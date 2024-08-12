@@ -1,7 +1,3 @@
-Here’s a more polished and detailed version of your README file for the chef/nutritionist chatbot web app:
-
----
-
 # Chef/Nutritionist Chatbot Web App
 
 This project is a collaborative effort between three developers to create a web application that integrates Firebase Authentication, Firestore, and OpenAI's API to deliver a personalized chatbot experience focused on dietary and nutritional guidance. The app allows users to sign up or log in, set dietary preferences, and interact with a chatbot that offers personalized recommendations based on these preferences.
