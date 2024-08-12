@@ -111,3 +111,7 @@ After setting up the application, users can sign up or log in to their accounts,
 ## Contribution
 
 This project was a collaborative effort between three developers. We worked together to create a seamless user experience that integrates cutting-edge technologies to provide users with a personalized nutritional assistant.
+
+  - [Aayush Koirala](https://www.linkedin.com/in/aayush-koirala-aa3a46222/)
+  - [Aman Chhetri](https://www.linkedin.com/in/aman-chh/)
+  - [Muhammad Bilal](https://www.linkedin.com/in/muhammad-bilal-221609231/)
