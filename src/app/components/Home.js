@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { firestore } from "../firebase";
 import Navbar from "./Navbar";
@@ -30,6 +30,8 @@ export default function Home({ user, onLogout }) {
     selectedGoals: [],
   });
 
+  const chatContainerRef = useRef(null); // Ref for chat container
+
   useEffect(() => {
     if (user) {
       fetchChatHistory();
@@ -43,6 +45,10 @@ export default function Home({ user, onLogout }) {
       setShowChatBox(true); // Show chat box when a new message is added
       const timer = setTimeout(() => {
         setShowStatic(false);
+        // Auto-scroll to the bottom
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+        }
       }, 500); // Duration of the animation
       return () => clearTimeout(timer);
     }
@@ -171,10 +177,12 @@ export default function Home({ user, onLogout }) {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
               className={`mb-8 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg p-4 h-[60vh] overflow-y-auto ${showStatic ? 'static-tv' : ''}`}
+              ref={chatContainerRef} // Attach ref to chat container
             >
               {chatMessages.map((msg, index) => (
                 <ChatMessage key={index} message={msg.text} isUser={msg.isUser} />
               ))}
+              {/* Add a dummy element at the bottom to scroll to */}
             </motion.div>
           )}
 
