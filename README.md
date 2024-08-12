@@ -40,7 +40,7 @@ This project is a collaborative effort between three developers to create a web 
   - [Firestore Database](https://firebase.google.com/products/firestore)
 
 - **API:**
-  - [OpenRouter API]([https://openai.com/api/](https://openrouter.ai/models/meta-llama/llama-3.1-8b-instruct:free))
+  - [OpenRouter API](https://openrouter.ai/models/meta-llama/llama-3.1-8b-instruct:free)
 
 ## Installation
 
