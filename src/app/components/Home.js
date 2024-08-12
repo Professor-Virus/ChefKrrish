@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+'use client'
+
+import React, { useState, useEffect, Suspense, useRef } from "react";
 import { doc, setDoc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { firestore } from "../firebase";
 import Navbar from "./Navbar";
@@ -12,6 +14,9 @@ import History from "./History";
 import { handleAsk } from "./chatbotLogic";
 import LoadingAnimation from "./LoadingAnimation";
 import ChatMessage from "./ChatMessage";
+import { OrbitControls } from '@react-three/drei';
+import AnimatedRat from "./AnimatedRat";
+import { Canvas } from '@react-three/fiber';
 
 export default function Home({ user, onLogout }) {
   const [inputText, setInputText] = useState("");
@@ -23,6 +28,23 @@ export default function Home({ user, onLogout }) {
   const [chatMessages, setChatMessages] = useState([]);
   const [showStatic, setShowStatic] = useState(false);
   const [showChatBox, setShowChatBox] = useState(false); // Added state for chat box visibility
+  const canvasRef = useRef();
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (event) => {
+    const { clientX, clientY } = event;
+    setMousePosition({ x: clientX, y: clientY });
+  };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.addEventListener('mousemove', handleMouseMove);
+      return () => {
+        canvas.removeEventListener('mousemove', handleMouseMove);
+      };
+    }
+  }, []);
 
   const [preferences, setPreferences] = useState({
     selectedRestrictions: [],
@@ -154,7 +176,7 @@ export default function Home({ user, onLogout }) {
             Hello, {user?.email || "Guest"}! I'm Krrish, your chef and
             nutritionist chatbot
           </h1>
-          <div className="flex justify-center mb-8">
+          {/* <div className="flex justify-center mb-8">
             <Image
               src={logo}
               alt="logo"
@@ -162,6 +184,16 @@ export default function Home({ user, onLogout }) {
               height={200}
               className="rounded-full shadow-lg"
             />
+          </div> */}
+          <div className="flex justify-center mb-8 h-[300px] w-[300px]" ref={canvasRef}>
+            <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+              <ambientLight intensity={0.5} />
+              <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
+              <Suspense fallback={null}>
+                <AnimatedRat mousePosition={mousePosition} />
+              </Suspense>
+              <OrbitControls enableZoom={false} enablePan={false} />
+            </Canvas>
           </div>
 
           {/* Enlarged chat interface with static TV effect */}
