@@ -236,9 +236,9 @@ export default function Home({ user, onLogout }) {
               toggleFunction={toggleChecklist}
               handleSubmit={handlePreferencesSubmit}
               initialPreferences={preferences}
+              isDarkMode={isDarkMode}
             />
           </div>
-
         </div>
       )}
       <History chatHistory={chatHistory} deleteHistoryFunction={handleDelete} isDarkMode={isDarkMode} />
