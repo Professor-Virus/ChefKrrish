@@ -2,14 +2,16 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-const ChatMessage = ({ message, isUser }) => {
+const ChatMessage = ({ message, isUser, isDarkMode }) => {
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
       <div
         className={`rounded-3xl py-2 px-4 max-w-xs lg:max-w-md ${
           isUser
             ? 'bg-blue-500 text-white'
-            : 'bg-gray-200 text-gray-800'
+            : isDarkMode
+              ? 'bg-gray-700 text-white'
+              : 'bg-gray-200 text-gray-800'
         }`}
       >
         {isUser ? (

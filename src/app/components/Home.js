@@ -181,12 +181,11 @@ export default function Home({ user, onLogout }) {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
               className={`mb-8 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} rounded-lg p-4 h-[60vh] overflow-y-auto ${showStatic ? 'static-tv' : ''}`}
-              ref={chatContainerRef} // Attach ref to chat container
+              ref={chatContainerRef}
             >
               {chatMessages.map((msg, index) => (
-                <ChatMessage key={index} message={msg.text} isUser={msg.isUser} />
+                <ChatMessage key={index} message={msg.text} isUser={msg.isUser} isDarkMode={isDarkMode} />
               ))}
-              {/* Add a dummy element at the bottom to scroll to */}
             </motion.div>
           )}
 
@@ -241,7 +240,7 @@ export default function Home({ user, onLogout }) {
           </div>
         </div>
       )}
-      <History chatHistory={chatHistory} deleteHistoryFunction={handleDelete}/>
+      <History chatHistory={chatHistory} deleteHistoryFunction={handleDelete} isDarkMode={isDarkMode} />
     </div>
   );
 }
