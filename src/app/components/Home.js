@@ -10,8 +10,12 @@ import sunIcon from "./sun.svg";
 import CheckList from "./CheckList";
 import History from "./History";
 import { handleAsk } from "./chatbotLogic";
-import LoadingAnimation from "./LoadingAnimation";
 import ChatMessage from "./ChatMessage";
+import dynamic from 'next/dynamic';
+
+const LoadingAnimation = dynamic(() => import('./LoadingAnimation'), {
+  ssr: false
+});
 
 export default function Home({ user, onLogout }) {
   const [inputText, setInputText] = useState("");
